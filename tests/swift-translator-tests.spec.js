@@ -37,11 +37,9 @@ function loadExcelData() {
 
   const mapped = rows.map(r => {
     let expected = r['Expected output '] || r['Expected output'];
-
     if (r['TC ID']?.startsWith('Neg_') && r['Actual output']) {
       expected = r['Actual output'];
     }
-
     if (r['TC ID']?.includes('UI') && expected?.includes(':')) {
       expected = expected.split(':').pop().trim();
     }
@@ -92,38 +90,43 @@ class TranslatorPage {
     await this.input().fill('');
   }
 
+  // 🔒 Wait for output element and non-empty translation (external site can be slow)
   async waitForResult() {
     await this.output().waitFor({ state: 'visible', timeout: 20000 });
+    // Allow time for the app to send request and render (debounce/network)
     await this.page.waitForTimeout(2000);
-
+    const selector = CONFIG.outputSelector;
     try {
       await this.page.waitForFunction(
-        sel => {
-          const els = document.querySelectorAll(sel);
-          for (const el of els) {
+        ({ sel }) => {
+          const candidates = document.querySelectorAll(sel);
+          for (const el of candidates) {
             if (el.tagName === 'TEXTAREA') continue;
             if (el.textContent && el.textContent.trim().length > 0) return true;
           }
           return false;
         },
-        CONFIG.outputSelector,
+        { sel: selector },
         { timeout: 45000 }
       );
     } catch {
-      console.warn('⚠️ Translator response delayed');
+      console.warn('⚠️ Translator response delayed or blocked');
     }
   }
 
   async translate(text) {
-    const runOnce = async () => {
+    const tryOnce = async () => {
       await this.clear();
       await this.input().fill(text);
       await this.waitForResult();
       return (await this.output().textContent())?.trim() ?? '';
     };
 
-    let result = await runOnce();
-    if (!result) result = await runOnce(); // retry once
+    let result = await tryOnce();
+    if (!result) {
+      // External translator can be slow; retry once before failing
+      result = await tryOnce();
+    }
     return result;
   }
 }
@@ -133,6 +136,7 @@ class TranslatorPage {
 /* -------------------------------------------------- */
 
 test.describe('SwiftTranslator – Singlish to Sinhala', () => {
+  // Retry once on failure (external translator can be slow or return empty occasionally)
   test.describe.configure({ retries: 1 });
 
   let pageObj;
@@ -142,12 +146,11 @@ test.describe('SwiftTranslator – Singlish to Sinhala', () => {
     await pageObj.open();
   });
 
-  /* ✅ POSITIVE TESTS */
+  /* ✅ POSITIVE */
   for (const tc of DATA.positive) {
     test(`${tc.id} - ${tc.name}`, async () => {
       const actual = await pageObj.translate(tc.input);
       const ok = compare(actual, tc.expected);
-
       expect(
         ok,
         `Translation mismatch.\nActual:   "${actual}"\nExpected: "${tc.expected}"`
@@ -155,12 +158,11 @@ test.describe('SwiftTranslator – Singlish to Sinhala', () => {
     });
   }
 
-  /* ❌ NEGATIVE TESTS */
+  /* ❌ NEGATIVE */
   for (const tc of DATA.negative) {
     test(`${tc.id} - ${tc.name}`, async () => {
       const actual = await pageObj.translate(tc.input);
       const ok = compare(actual, tc.expected);
-
       expect(
         ok,
         `Translation mismatch.\nActual:   "${actual}"\nExpected: "${tc.expected}"`
@@ -168,7 +170,7 @@ test.describe('SwiftTranslator – Singlish to Sinhala', () => {
     });
   }
 
-  /* 🖥 UI TEST */
+  /* 🖥 UI */
   if (DATA.ui) {
     test('UI – Real-time translation', async () => {
       const input = pageObj.input();
@@ -179,10 +181,8 @@ test.describe('SwiftTranslator – Singlish to Sinhala', () => {
       }
 
       await pageObj.waitForResult();
-
       const actual = (await pageObj.output().textContent())?.trim() ?? '';
       const ok = compare(actual, DATA.ui.expected);
-
       expect(
         ok,
         `Translation mismatch.\nActual:   "${actual}"\nExpected: "${DATA.ui.expected}"`
