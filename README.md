@@ -1,4 +1,4 @@
-# IT23225138 – Playwright E2E Tests (SwiftTranslator)
+# IT23225138 – Playwright Tests (SwiftTranslator)
 
 Automated end-to-end tests for the **SwiftTranslator** website (Singlish to Sinhala translation) using Playwright.
 
