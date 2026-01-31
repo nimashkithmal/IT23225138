@@ -1,4 +1,4 @@
 Git repository link for this project (IT23225138 – Playwright E2E Tests):
 
-https://github.com/nimashkithmal/ITPM_-Assignment_1.git
+https://github.com/nimashkithmal/IT23225138.git
 

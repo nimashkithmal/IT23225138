@@ -14,7 +14,7 @@ Automated end-to-end tests for the **SwiftTranslator** website (Singlish to Sinh
 ## 1. Clone the repository
 
 ```bash
-git clone <https://github.com/nimashkithmal/ITPM_-Assignment_1.git>
+git clone <https://github.com/nimashkithmal/IT23225138.git>
 cd IT23225138
 ```
 
