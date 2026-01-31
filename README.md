@@ -14,11 +14,10 @@ Automated end-to-end tests for the **SwiftTranslator** website (Singlish to Sinh
 ## 1. Clone the repository
 
 ```bash
-git clone <YOUR_REPOSITORY_URL>
+git clone <https://github.com/nimashkithmal/ITPM_-Assignment_1.git>
 cd IT23225138
 ```
 
-Replace `<YOUR_REPOSITORY_URL>` with the actual Git repository URL (see `REPOSITORY_LINK.txt`).
 
 ---
 
