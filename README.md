@@ -40,7 +40,7 @@ cd "/Users/nimashkithmal/Downloads/IT23225138"
    playwright install
 
 4. Run the automation script
-   python3 it23225138_test_automation.py --excel "/Users/nimashkithmal/Downloads/IT23225138/It23225138_Test cases.xlsx" --url "https://www.pixelssuite.com/chat-translator" --wait-ms 5000 --type-delay-ms 80 --slow-mo-ms 200 --save-every 1 --keep-open
+   python3 it23225138_test_automation.py --excel "It23225138_Test cases.xlsx" --url "https://www.pixelssuite.com/chat-translator" --wait-ms 5000 --type-delay-ms 80 --slow-mo-ms 200 --save-every 1 --keep-open
 
 ---
 
