@@ -4,7 +4,7 @@ IT23225138 - IT3040 Assignment 1
 Automated Testing for Singlish to Sinhala Transliteration System
 
 ## Repository
-
+https://github.com/nimashkithmal/IT23225138.git
 ---
 
 ## Project Structure
